@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Tracker Tests</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+        .test-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        .test-case {
+            margin: 1rem 0;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 4px;
+        }
+        .pass { color: #059669; }
+        .fail { color: #dc2626; }
+        .test-input {
+            font-family: monospace;
+            background: #1e293b;
+            color: #f1f5f9;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0.25rem;
+        }
+        button:hover {
+            background: #1d4ed8;
+        }
+        #results {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Student Finance Tracker - Tests</h1>
+    
+    <div class="test-section">
+        <h2>Regex Validation Tests</h2>
+        <p>Testing the validation patterns used in the application:</p>
+        
+        <div class="test-case">
+            <h3>Description Validation</h3>
+            <p>Pattern: <code>/^\S(?:.*\S)?$/</code> (no leading/trailing spaces)</p>
+            <button onclick="testDescriptionValidation()">Run Tests</button>
+        </div>
+        
+        <div class="test-case">
+            <h3>Amount Validation</h3>
+            <p>Pattern: <code>/^(0|[1-9]\d*)(\.\d{1,2})?$/</code> (positive number with optional 2 decimals)</p>
+            <button onclick="testAmountValidation()">Run Tests</button>
+        </div>
+        
+        <div class="test-case">
+            <h3>Date Validation</h3>
+            <p>Pattern: <code>/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/</code> (YYYY-MM-DD)</p>
+            <button onclick="testDateValidation()">Run Tests</button>
+        </div>
+        
+        <div class="test-case">
+            <h3>Category Validation</h3>
+            <p>Pattern: <code>/^[A-Za-z]+(?:[ -][A-Za-z]+)*$/</code> (letters, spaces, hyphens)</p>
+            <button onclick="testCategoryValidation()">Run Tests</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Advanced Regex Tests</h2>
+        
+        <div class="test-case">
+            <h3>Duplicate Words Detection</h3>
+            <p>Pattern: <code>/\b(\w+)\s+\1\b/i</code> (back-reference)</p>
+            <button onclick="testDuplicateWords()">Run Tests</button>
+        </div>
+        
+        <div class="test-case">
+            <h3>Cents Detection</h3>
+            <p>Pattern: <code>/\.\d{2}\b/</code> (amounts with cents)</p>
+            <button onclick="testCentsDetection()">Run Tests</button>
+        </div>
+        
+        <div class="test-case">
+            <h3>Beverage Keywords</h3>
+            <p>Pattern: <code>/(coffee|tea|juice|soda|water)/i</code></p>
+            <button onclick="testBeverageKeywords()">Run Tests</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Search Functionality Tests</h2>
+        <button onclick="testSearchFunctionality()">Run Search Tests</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Data Validation Tests</h2>
+        <button onclick="testDataValidation()">Run Data Tests</button>
+    </div>
+    
+    <button onclick="runAllTests()" style="background: #059669; font-size: 1.1rem; padding: 1rem 2rem;">Run All Tests</button>
+    
+    <div id="results"></div>
+
+    <script type="module">
+        // Import modules for testing
+        import { validators } from './scripts/validators.js';
+        import { search } from './scripts/search.js';
+        import { storage } from './scripts/storage.js';
+
+        // Make modules available globally for test functions
+        window.validators = validators;
+        window.search = search;
+        window.storage = storage;
+
+        // Test utilities
+        window.assert = (condition, message) => {
+            if (condition) {
+                return `✅ PASS: ${message}`;
+            } else {
+                return `❌ FAIL: ${message}`;
+            }
+        };
+
+        window.log = (message) => {
+            const results = document.getElementById('results');
+            results.textContent += message + '\n';
+        };
+
+        window.clearResults = () => {
+            document.getElementById('results').textContent = '';
+        };
+
+        // Description validation tests
+        window.testDescriptionValidation = () => {
+            clearResults();
+            log('=== Description Validation Tests ===');
+            
+            const testCases = [
+                { input: 'Valid description', expected: true },
+                { input: 'Another valid one', expected: true },
+                { input: ' Leading space', expected: false },
+                { input: 'Trailing space ', expected: false },
+                { input: '  Both spaces  ', expected: false },
+                { input: 'Double  space', expected: true }, // This should pass the regex but fail duplicate check
+                { input: 'pizza pizza', expected: false }, // Duplicate words
+                { input: 'A', expected: true },
+                { input: '', expected: false },
+                { input: '   ', expected: false }
+            ];
+            
+            testCases.forEach(test => {
+                const result = validators.validateDescription(test.input);
+                log(assert(result.valid === test.expected, 
+                    `"${test.input}" -> ${result.valid} (expected ${test.expected})`));
+                if (!result.valid) {
+                    log(`    Error: ${result.message}`);
+                }
+            });
+        };
+
+        // Amount validation tests
+        window.testAmountValidation = () => {
+            clearResults();
+            log('=== Amount Validation Tests ===');
+            
+            const testCases = [
+                { input: '12.50', expected: true },
+                { input: '0', expected: false }, // Zero not allowed
+                { input: '100', expected: true },
+                { input: '0.01', expected: true },
+                { input: '999999.99', expected: true },
+                { input: '-5.00', expected: false },
+                { input: '12.345', expected: false }, // Too many decimals
+                { input: '01.50', expected: false }, // Leading zero
+                { input: 'abc', expected: false },
+                { input: '', expected: false },
+                { input: '12.5', expected: true } // One decimal place OK
+            ];
+            
+            testCases.forEach(test => {
+                const result = validators.validateAmount(test.input);
+                log(assert(result.valid === test.expected, 
+                    `"${test.input}" -> ${result.valid} (expected ${test.expected})`));
+                if (!result.valid) {
+                    log(`    Error: ${result.message}`);
+                }
+            });
+        };
+
+        // Date validation tests
+        window.testDateValidation = () => {
+            clearResults();
+            log('=== Date Validation Tests ===');
+            
+            const today = new Date().toISOString().split('T')[0];
+            const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+            
+            const testCases = [
+                { input: today, expected: true },
+                { input: yesterday, expected: true },
+                { input: tomorrow, expected: false }, // Future date
+                { input: '2025-01-15', expected: true },
+                { input: '2025-13-01', expected: false }, // Invalid month
+                { input: '2025-01-32', expected: false }, // Invalid day
+                { input: '25-01-15', expected: false }, // Wrong format
+                { input: '2025/01/15', expected: false }, // Wrong separator
+                { input: '', expected: false },
+                { input: 'invalid', expected: false }
+            ];
+            
+            testCases.forEach(test => {
+                const result = validators.validateDate(test.input);
+                log(assert(result.valid === test.expected, 
+                    `"${test.input}" -> ${result.valid} (expected ${test.expected})`));
+                if (!result.valid) {
+                    log(`    Error: ${result.message}`);
+                }
+            });
+        };
+
+        // Category validation tests
+        window.testCategoryValidation = () => {
+            clearResults();
+            log('=== Category Validation Tests ===');
+            
+            const testCases = [
+                { input: 'Food', expected: true },
+                { input: 'Transport', expected: true },
+                { input: 'Books and Supplies', expected: true },
+                { input: 'Health-Care', expected: true },
+                { input: 'Food123', expected: false }, // Numbers not allowed
+                { input: 'Food!', expected: false }, // Special chars not allowed
+                { input: 'Food  Drinks', expected: false }, // Double spaces not allowed
+                { input: ' Food', expected: false }, // Leading space
+                { input: 'Food ', expected: false }, // Trailing space
+                { input: '', expected: false },
+                { input: 'A', expected: true } // Single letter OK
+            ];
+            
+            testCases.forEach(test => {
+                const result = validators.validateCategory(test.input);
+                log(assert(result.valid === test.expected, 
+                    `"${test.input}" -> ${result.valid} (expected ${test.expected})`));
+                if (!result.valid) {
+                    log(`    Error: ${result.message}`);
+                }
+            });
+        };
+
+        // Duplicate words tests
+        window.testDuplicateWords = () => {
+            clearResults();
+            log('=== Duplicate Words Detection Tests ===');
+            
+            const pattern = validators.patterns.duplicateWords;
+            const testCases = [
+                { input: 'pizza pizza', expected: true },
+                { input: 'the the quick brown fox', expected: true },
+                { input: 'This is is a test', expected: true },
+                { input: 'normal sentence here', expected: false },
+                { input: 'Pizza PIZZA', expected: true }, // Case insensitive
+                { input: 'pizza, pizza', expected: false }, // Comma breaks word boundary
+                { input: 'pizzapizza', expected: false }, // No space
+                { input: 'a a', expected: true }
+            ];
+            
+            testCases.forEach(test => {
+                const result = pattern.test(test.input);
+                log(assert(result === test.expected, 
+                    `"${test.input}" -> ${result} (expected ${test.expected})`));
+            });
+        };
+
+        // Cents detection tests
+        window.testCentsDetection = () => {
+            clearResults();
+            log('=== Cents Detection Tests ===');
+            
+            const pattern = validators.patterns.centsPresent;
+            const testCases = [
+                { input: '12.50', expected: true },
+                { input: '0.99', expected: true },
+                { input: '100.00', expected: true },
+                { input: '12.5', expected: false }, // Only one decimal
+                { input: '12', expected: false }, // No decimals
+                { input: '12.345', expected: false }, // Three decimals
+                { input: 'Cost is 12.50 total', expected: true },
+                { input: 'No cents here', expected: false }
+            ];
+            
+            testCases.forEach(test => {
+                const result = pattern.test(test.input);
+                log(assert(result === test.expected, 
+                    `"${test.input}" -> ${result} (expected ${test.expected})`));
+            });
+        };
+
+        // Beverage keywords tests
+        window.testBeverageKeywords = () => {
+            clearResults();
+            log('=== Beverage Keywords Tests ===');
+            
+            const pattern = validators.patterns.beverageKeywords;
+            const testCases = [
+                { input: 'Morning coffee', expected: true },
+                { input: 'Green tea latte', expected: true },
+                { input: 'Orange juice', expected: true },
+                { input: 'Diet soda', expected: true },
+                { input: 'Bottled water', expected: true },
+                { input: 'COFFEE', expected: true }, // Case insensitive
+                { input: 'Pizza lunch', expected: false },
+                { input: 'Book purchase', expected: false },
+                { input: 'Coffee and tea', expected: true } // Multiple matches
+            ];
+            
+            testCases.forEach(test => {
+                const result = pattern.test(test.input);
+                log(assert(result === test.expected, 
+                    `"${test.input}" -> ${result} (expected ${test.expected})`));
+            });
+        };
+
+        // Search functionality tests
+        window.testSearchFunctionality = () => {
+            clearResults();
+            log('=== Search Functionality Tests ===');
+            
+            const sampleTransactions = [
+                { id: '1', description: 'Coffee shop', amount: 5.50, category: 'Food', date: '2025-01-15' },
+                { id: '2', description: 'Bus ticket', amount: 2.25, category: 'Transport', date: '2025-01-14' },
+                { id: '3', description: 'Tea and cookies', amount: 8.75, category: 'Food', date: '2025-01-13' }
+            ];
+            
+            // Test regex compilation
+            let regex = search.compileRegex('coffee', 'i');
+            log(assert(regex !== null, 'Valid regex compiles successfully'));
+            
+            regex = search.compileRegex('[invalid', 'i');
+            log(assert(regex === null, 'Invalid regex returns null'));
+            
+            // Test search
+            let results = search.searchTransactions(sampleTransactions, 'coffee');
+            log(assert(results.length === 1, `Coffee search returns 1 result (got ${results.length})`));
+            
+            results = search.searchTransactions(sampleTransactions, 'food');
+            log(assert(results.length === 2, `Food search returns 2 results (got ${results.length})`));
+            
+            results = search.searchTransactions(sampleTransactions, '');
+            log(assert(results.length === 3, `Empty search returns all results (got ${results.length})`));
+            
+            // Test sorting
+            const sorted = search.sortTransactions(sampleTransactions, 'amount-desc');
+            log(assert(sorted[0].amount === 8.75, `Amount desc sort works (first amount: ${sorted[0].amount})`));
+            
+            // Test highlighting
+            const highlighted = search.highlightMatches('Coffee shop', search.compileRegex('coffee', 'i'));
+            log(assert(highlighted.includes('<mark>'), 'Highlighting adds mark tags'));
+        };
+
+        // Data validation tests
+        window.testDataValidation = () => {
+            clearResults();
+            log('=== Data Validation Tests ===');
+            
+            const validTransaction = {
+                id: 'test_1',
+                description: 'Test transaction',
+                amount: 10.50,
+                category: 'Food',
+                date: '2025-01-15',
+                createdAt: '2025-01-15T12:00:00.000Z'
+            };
+            
+            log(assert(storage.validateTransaction(validTransaction), 'Valid transaction passes validation'));
+            
+            const invalidTransaction = {
+                id: 'test_2',
+                description: 'Test transaction',
+                amount: -5.00, // Invalid negative amount
+                category: 'Food',
+                date: '2025-01-15',
+                createdAt: '2025-01-15T12:00:00.000Z'
+            };
+            
+            log(assert(!storage.validateTransaction(invalidTransaction), 'Invalid transaction fails validation'));
+            
+            const missingFields = {
+                id: 'test_3',
+                description: 'Test transaction'
+                // Missing required fields
+            };
+            
+            log(assert(!storage.validateTransaction(missingFields), 'Transaction with missing fields fails validation'));
+        };
+
+        // Run all tests
+        window.runAllTests = () => {
+            clearResults();
+            log('Running all tests...\n');
+            
+            testDescriptionValidation();
+            log('\n');
+            testAmountValidation();
+            log('\n');
+            testDateValidation();
+            log('\n');
+            testCategoryValidation();
+            log('\n');
+            testDuplicateWords();
+            log('\n');
+            testCentsDetection();
+            log('\n');
+            testBeverageKeywords();
+            log('\n');
+            testSearchFunctionality();
+            log('\n');
+            testDataValidation();
+            log('\n=== All tests completed ===');
+        };
+    </script>
+</body>
+</html>

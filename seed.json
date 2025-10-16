@@ -1,0 +1,118 @@
+{
+  "transactions": [
+    {
+      "id": "txn_1",
+      "description": "Lunch at cafeteria",
+      "amount": 12.50,
+      "category": "Food",
+      "date": "2025-01-15",
+      "createdAt": "2025-01-15T12:30:00.000Z",
+      "updatedAt": "2025-01-15T12:30:00.000Z"
+    },
+    {
+      "id": "txn_2",
+      "description": "Chemistry textbook",
+      "amount": 89.99,
+      "category": "Books",
+      "date": "2025-01-14",
+      "createdAt": "2025-01-14T09:15:00.000Z",
+      "updatedAt": "2025-01-14T09:15:00.000Z"
+    },
+    {
+      "id": "txn_3",
+      "description": "Bus pass monthly",
+      "amount": 45.00,
+      "category": "Transport",
+      "date": "2025-01-13",
+      "createdAt": "2025-01-13T08:00:00.000Z",
+      "updatedAt": "2025-01-13T08:00:00.000Z"
+    },
+    {
+      "id": "txn_4",
+      "description": "Coffee with friends",
+      "amount": 8.75,
+      "category": "Entertainment",
+      "date": "2025-01-12",
+      "createdAt": "2025-01-12T15:45:00.000Z",
+      "updatedAt": "2025-01-12T15:45:00.000Z"
+    },
+    {
+      "id": "txn_5",
+      "description": "Registration fees",
+      "amount": 250.00,
+      "category": "Fees",
+      "date": "2025-01-10",
+      "createdAt": "2025-01-10T10:00:00.000Z",
+      "updatedAt": "2025-01-10T10:00:00.000Z"
+    },
+    {
+      "id": "txn_6",
+      "description": "Dinner pizza pizza",
+      "amount": 15.99,
+      "category": "Food",
+      "date": "2025-01-09",
+      "createdAt": "2025-01-09T19:30:00.000Z",
+      "updatedAt": "2025-01-09T19:30:00.000Z"
+    },
+    {
+      "id": "txn_7",
+      "description": "Tea and coffee supplies",
+      "amount": 23.45,
+      "category": "Food",
+      "date": "2025-01-08",
+      "createdAt": "2025-01-08T11:20:00.000Z",
+      "updatedAt": "2025-01-08T11:20:00.000Z"
+    },
+    {
+      "id": "txn_8",
+      "description": "Uber ride to campus",
+      "amount": 12.30,
+      "category": "Transport",
+      "date": "2025-01-07",
+      "createdAt": "2025-01-07T08:15:00.000Z",
+      "updatedAt": "2025-01-07T08:15:00.000Z"
+    },
+    {
+      "id": "txn_9",
+      "description": "Movie tickets",
+      "amount": 18.00,
+      "category": "Entertainment",
+      "date": "2025-01-06",
+      "createdAt": "2025-01-06T20:00:00.000Z",
+      "updatedAt": "2025-01-06T20:00:00.000Z"
+    },
+    {
+      "id": "txn_10",
+      "description": "Notebook and pens",
+      "amount": 7.25,
+      "category": "Other",
+      "date": "2025-01-05",
+      "createdAt": "2025-01-05T14:30:00.000Z",
+      "updatedAt": "2025-01-05T14:30:00.000Z"
+    },
+    {
+      "id": "txn_11",
+      "description": "Breakfast at cafe",
+      "amount": 9.50,
+      "category": "Food",
+      "date": "2025-01-04",
+      "createdAt": "2025-01-04T08:30:00.000Z",
+      "updatedAt": "2025-01-04T08:30:00.000Z"
+    },
+    {
+      "id": "txn_12",
+      "description": "Lab manual",
+      "amount": 35.00,
+      "category": "Books",
+      "date": "2025-01-03",
+      "createdAt": "2025-01-03T13:15:00.000Z",
+      "updatedAt": "2025-01-03T13:15:00.000Z"
+    }
+  ],
+  "settings": {
+    "currency": "$",
+    "spendingLimit": 500
+  },
+  "exportDate": "2025-01-15T12:00:00.000Z",
+  "version": "1.0"
+}
